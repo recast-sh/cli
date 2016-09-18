@@ -5,6 +5,9 @@ import (
 	"runtime/debug"
 
 	"github.com/spf13/pflag"
+
+	"recast.sh/v0/core"
+	"recast.sh/v0/core/log"
 )
 
 var (
@@ -37,7 +40,7 @@ func Recast(fn func(func())) {
 
 	defer func() {
 		if err := recover(); err != nil {
-			if errors.IsRecastError(err) {
+			if core.IsRecastError(err) {
 				log.Errorf("Error: %v", err)
 			} else {
 				log.Errorf("Unexpected Error: %v", err)
@@ -47,5 +50,17 @@ func Recast(fn func(func())) {
 		}
 	}()
 
-	fn(ExecRegistred)
+	fn(core.ExecRegistred)
+}
+
+func StringFlag(p *string, name, shorthand, value, usage string) {
+	pflag.StringVarP(p, name, shorthand, value, usage)
+}
+
+func BoolFlag(p *bool, name, shorthand string, value bool, usage string) {
+	pflag.BoolVarP(p, name, shorthand, value, usage)
+}
+
+func IntFlag(p *int, name, shorthand string, value int, usage string) {
+	pflag.IntVarP(p, name, shorthand, value, usage)
 }
